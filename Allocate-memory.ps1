@@ -8,12 +8,12 @@ function AllocateMemory {
     $ChoosedDrivecolon = ($ChoosedDrive + ":")
     if ($Drives.Contains($ChoosedDrive)) {
 	    $FreeSpace = Get-WmiObject Win32_LogicalDisk -Filter "DeviceID='$ChoosedDrivecolon'" | Foreach-Object {$_.FreeSpace}
-	    $FreeSpaceGB = ([math]::Truncate($FreeSpace/1024/1024/1024))
-	    Write-Output "Your Free Space: $FreeSpaceGB GB"
-	    $SpaceToAllocateGB = ($FreeSpaceGB - 70)
-	    # Variants of function without FreeSpaceGB variable
-	    #$SpaceToAllocateGB = ([math]::Truncate(($FreeSpace-(70*1024*1024*1024))/1024/1024/1024))
-	    Write-Output "Going to allocate: $SpaceToAllocateGB GB"
+	    $FreeSpaceGiB = ([math]::Truncate($FreeSpace/1024/1024/1024))
+	    Write-Output "Your Free Space: $FreeSpaceGiB GiB"
+	    $SpaceToAllocateGiB = ($FreeSpaceGiB - 70)
+	    # Variants of function without FreeSpaceGiB variable
+	    #$SpaceToAllocateGiB = ([math]::Truncate(($FreeSpace-(70*1024*1024*1024))/1024/1024/1024))
+	    Write-Output "Going to allocate: $SpaceToAllocateGiB GiB"
 
         if ($ChoosedDrive -eq "C") {
             $WritePath = "$HOME\Desktop\testmemory"
@@ -21,27 +21,27 @@ function AllocateMemory {
             $WritePath = ($ChoosedDrive + ":\testmemory")
         }
 
-	    if ($SpaceToAllocateGB -gt 0) { 
+	    if ($SpaceToAllocateGiB -gt 0) { 
 		    if (Test-Path -LiteralPath $WritePath -PathType Any) { 
 			    Write-Output "Path '$WritePath' already exists" 
 		    } else { 
 		    New-Item -ItemType directory -Path $WritePath | Foreach-Object {$_.FullName}
 		    } 
-            Write-Output "`nGenerating 1GB of random data`n"
+            Write-Output "`nGenerating 1GiB of random data`n"
 		    $out = new-object byte[] (1024*1024*1024)
 		    (new-object Random).NextBytes($out)
             Write-Output "Writing random data to multiple files in '$WritePath'`n"
-		    Measure-Command -Expression {for ($i=1; $i -le $SpaceToAllocateGB; $i++) { 
+		    Measure-Command -Expression {for ($i=1; $i -le $SpaceToAllocateGiB; $i++) { 
 			    $filename = Get-Date -Format HH.mm.ss.fff
 			    [IO.File]::WriteAllBytes("$WritePath\$filename", $out) 
-				Write-Host "`rAllocated $i/$SpaceToAllocateGB GB" -NoNewLine
-				if ($i -eq $SpaceToAllocateGB) {Write-Host "`rAllocated $i/$SpaceToAllocateGB GB"}
+				Write-Host "`rAllocated $i/$SpaceToAllocateGiB GiB" -NoNewLine
+				if ($i -eq $SpaceToAllocateGiB) {Write-Host "`rAllocated $i/$SpaceToAllocateGiB GiB"}
 		    } }
             Write-Output "Done. `n"
 	    } else { 
             Clear-Host
 		    Write-Output "You don't need to allocate memory on your drive $ChoosedDrivecolon"
-            Write-Output "Your free space is already lower or equal to 70 GB"
+            Write-Output "Your free space is already lower or equal to 70 GiB"
             Write-Output "Please, try another drive."
             Write-Output "To exit press 'Ctrl+C' `n"
             AllocateMemory
