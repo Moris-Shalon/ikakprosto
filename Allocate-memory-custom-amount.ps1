@@ -28,7 +28,7 @@ function AllocateMemory {
 		    } else { 
 		    New-Item -ItemType directory -Path $WritePath | Foreach-Object {$_.FullName}
 		    } 
-            Write-Output "`nGenerating 1GiB of random data`n"
+            Write-Output "`nGenerating 1 GiB of random data`n"
 		    $out = new-object byte[] (1024*1024*1024)
 		    (new-object Random).NextBytes($out)
             Write-Output "Writing random data to multiple files in '$WritePath'`n"
