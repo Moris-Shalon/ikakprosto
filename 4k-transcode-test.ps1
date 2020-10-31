@@ -55,33 +55,47 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg) {
 				$Encoder = "_nvenc"
 			}
             $ffmpegpre = "-benchmark -hide_banner -hwaccel $Choosedhwaccel -c:v hevc$Decoder -i"
-            $ffmpegpost = "-map 0:v:0 -c:v h264$Encoder -vsync 0 -qmin 18 -qmax 24 -c:a copy -f null -"
+			$outfilecreation = "-f null -"
+			$ffmpegpost = "-map 0:v:0 -c:v h264$Encoder -vsync 0 -qmin 18 -qmax 24 -c:a copy $outfilecreation"
             $OperationChoose = $Host.UI.PromptForChoice("Transcode/Decode Choose", "Would you like to transcode from H.265 to H.264, or just decode H.265 video, or do both operations?", @('&Transcode', '&Decode', '&Both'), 2)
 			If ($OperationChoose -eq 0 -Or $OperationChoose -eq 2 ) {
-                $outfile = "$outputdir\$Manufacturer$Choosedhwaccel-h265-4K-8-bit-60FPS-transcode-h264.txt"
-                Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost " } | Tee-Object -file "$outfile"
+				$outfile = "$outputdir\$Manufacturer$Choosedhwaccel-h265-4K-8-bit-60FPS-transcode-h264"
+                $outfilecreationchoice = $Host.UI.PromptForChoice("MP4 file creation choice", "Would you like to create/store .mp4 output file after transcoding media?", @('&Yes', '&No'), 1)
+				If ($outfilecreationchoice -eq 0) { 
+					$outfilecreation = "$outfile.mp4"
+				} Else { 
+					$outfilecreation = "-f null -"
+				}
+				Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt"
             }
             If ($OperationChoose -eq 1 -Or $OperationChoose -eq 2 ) {
-                $outfile = "$outputdir\$Manufacturer$Choosedhwaccel-h265-4K-8-bit-60FPS-decode.txt"
-                Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' -f null -" } | Tee-Object -file "$outfile"
+                $outfile = "$outputdir\$Manufacturer$Choosedhwaccel-h265-4K-8-bit-60FPS-decode"
+                Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' -f null -" } | Tee-Object -file "$outfile.txt"
             }
 		} Else {
             $ffmpegpre = "-benchmark -hide_banner -c:v hevc -i"
+			$outfilecreation = "-f null -"
 			$OperationChoose = $Host.UI.PromptForChoice("Transcode/Decode Choose", "Would you like to transcode from H.265 to H.264, or just decode H.265 video, or do both operations?", @('&Transcode', '&Decode', '&Both'), 2)
 			If ($OperationChoose -eq 0 -Or $OperationChoose -eq 2 ) {
+				$outfilecreationchoice = $Host.UI.PromptForChoice("MP4 file creation choice", "Would you like to create/store .mp4 output file after transcoding media?", @('&Yes', '&No'), 1)
+				If ($outfilecreationchoice -eq 0) { 
+					$outfilecreation = "$outfile.mp4"
+				} Else { 
+					$outfilecreation = "-f null -"
+				}
                 ForEach ($crf in @('', '-crf 0')) {
-                    $ffmpegpost = "-map 0:v:0 -c:v h264 -vsync 0 $crf -qmin 18 -qmax 24 -c:a copy -f null -"
+					$ffmpegpost = "-map 0:v:0 -c:v h264 -vsync 0 $crf -qmin 18 -qmax 24 -c:a copy $outfilecreation"
                     if ($crf -eq '') {
-                        $outfile = "$outputdir\cpuonly-h265-4K-8-bit-60FPS-transcode-h264.txt"
+                        $outfile = "$outputdir\cpuonly-h265-4K-8-bit-60FPS-transcode-h264"
                     } Else {
-                        $outfile = "$outputdir\cpuonly-h265-4K-8-bit-60FPS-transcode-h264-crf0.txt"
+                        $outfile = "$outputdir\cpuonly-h265-4K-8-bit-60FPS-transcode-h264-crf0"
                     }
-			        Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile"
+			        Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt"
                 }
             }
             If ($OperationChoose -eq 1 -Or $OperationChoose -eq 2 ) {
-                $outfile = "$outputdir\cpyonly-h265-4K-8-bit-60FPS-decode.txt"
-			    Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' -f null -"} | Tee-Object -file "$outfile"
+                $outfile = "$outputdir\cpyonly-h265-4K-8-bit-60FPS-decode"
+			    Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' -f null -"} | Tee-Object -file "$outfile.txt"
             }
 		}
         Write-Output "`nDone. `n"
