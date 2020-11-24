@@ -26,7 +26,7 @@ while ($true) {
 		Write-Output "PowerShell function (Get-WmiObject Win32_Battery) didn't return any information about your battery.";
 		Write-Output "Maybe it's because you are trying to run this script on desktop PC.";
 		Write-Output "If not and you are trying to run this script on laptop, then, please, contact your laptop manufacturer.";
-		pause;
+		break;
 	}
 	Start-Sleep -Seconds 10;
 }
