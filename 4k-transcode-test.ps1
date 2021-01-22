@@ -66,6 +66,12 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg) {
 				}
 				$ffmpegpost = "-map 0:v:0 -c:v h264$Encoder -vsync 0 -qmin 18 -qmax 24 -c:a copy $outfilecreation"
 				Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt"
+				If ($outfilecreationchoice -eq 0) {
+					echo("File Size (bytes) = " + ((Get-Item "$outfile.mp4").Length)) | Tee-Object -file "$outfile.txt" -Append
+					echo("File Size (KiB) = " + ((Get-Item "$outfile.mp4").Length)/1KB) | Tee-Object -file "$outfile.txt" -Append
+					echo("File Size (MiB) = " + ((Get-Item "$outfile.mp4").Length)/1MB) | Tee-Object -file "$outfile.txt" -Append
+					echo("File Size (GiB) = " + ((Get-Item "$outfile.mp4").Length)/1GB) | Tee-Object -file "$outfile.txt" -Append
+				}
             }
             If ($OperationChoose -eq 1 -Or $OperationChoose -eq 2 ) {
                 $outfile = "$outputdir\$Manufacturer$Choosedhwaccel-h265-4K-8-bit-60FPS-decode"
@@ -89,6 +95,12 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg) {
 					}
 					$ffmpegpost = "-map 0:v:0 -c:v h264 -vsync 0 $crf -qmin 18 -qmax 24 -c:a copy $outfilecreation"
 			        Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt"
+					If ($outfilecreationchoice -eq 0) {
+						echo("File Size (bytes) = " + ((Get-Item "$outfile.mp4").Length)) | Tee-Object -file "$outfile.txt" -Append
+						echo("File Size (KiB) = " + ((Get-Item "$outfile.mp4").Length)/1KB) | Tee-Object -file "$outfile.txt" -Append
+						echo("File Size (MiB) = " + ((Get-Item "$outfile.mp4").Length)/1MB) | Tee-Object -file "$outfile.txt" -Append
+						echo("File Size (GiB) = " + ((Get-Item "$outfile.mp4").Length)/1GB) | Tee-Object -file "$outfile.txt" -Append
+					}
                 }
             }
             If ($OperationChoose -eq 1 -Or $OperationChoose -eq 2 ) {
