@@ -72,7 +72,7 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg) {
 					echo("File Size (MiB) = " + ((Get-Item "$outfile.mp4").Length)/1MB) | Tee-Object -file "$outfile.txt" -Append
 					echo("File Size (GiB) = " + ((Get-Item "$outfile.mp4").Length)/1GB) | Tee-Object -file "$outfile.txt" -Append
 					Write-output `n | Out-File "$outfile.txt" -Append
-					& {Invoke-Expression "& '$ffmpeg' -hide_banner -i '$outfile.mp4'"} 2>&1 | % ToString | Tee-Object -file "outfile.txt" -Append
+					& {Invoke-Expression "& '$ffmpeg' -hide_banner -i '$outfile.mp4'"} 2>&1 | % ToString | Tee-Object -file "$outfile.txt" -Append
 				}
             }
             If ($OperationChoose -eq 1 -Or $OperationChoose -eq 2 ) {
@@ -103,7 +103,7 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg) {
 						echo("File Size (MiB) = " + ((Get-Item "$outfile.mp4").Length)/1MB) | Tee-Object -file "$outfile.txt" -Append
 						echo("File Size (GiB) = " + ((Get-Item "$outfile.mp4").Length)/1GB) | Tee-Object -file "$outfile.txt" -Append
 						Write-output `n | Out-File "$outfile.txt" -Append
-						& {Invoke-Expression "& '$ffmpeg' -hide_banner -i '$outfile.mp4'"} 2>&1 | % ToString | Tee-Object -file "outfile.txt" -Append
+						& {Invoke-Expression "& '$ffmpeg' -hide_banner -i '$outfile.mp4'"} 2>&1 | % ToString | Tee-Object -file "$outfile.txt" -Append
 					}
                 }
             }
