@@ -3,15 +3,15 @@ ikakprosto Scripts
 
 Альтернативные версии скриптов/приложений: 
 * Mac:
-    * Swift + Obj-C (Автор - (kavars)[https://github.com/kavars]):
-        * (bench)[https://github.com/kavars/bench] (тест автономности и заполнение свободного пространства на SSD/HDD)
+    * Swift + Obj-C (Автор - [kavars](https://github.com/kavars)):
+        * [bench](https://github.com/kavars/bench) (тест автономности и заполнение свободного пространства на SSD/HDD)
 * Windows:
-    * Rust (Автор - (Adatan)[https://github.com/Adatan]):
-        * (battery_charge_log)[https://github.com/iKakProsto2/battery_charge_log] (тест автономности)
-        * (storage_max_loader)[https://github.com/iKakProsto2/storage_max_loader] (заполнение свободного пространства на SSD/HDD)
+    * Rust (Автор - [Adatan](https://github.com/Adatan)):
+        * [battery_charge_log](https://github.com/iKakProsto2/battery_charge_log) (тест автономности)
+        * [storage_max_loader](https://github.com/iKakProsto2/storage_max_loader) (заполнение свободного пространства на SSD/HDD)
 
 
-Большое спасибо (Adatan)[https://github.com/Adatan] и (kavars)[https://github.com/kavars] за то, что вызвались разработать аналоги на Rust (для Windows) и Swift + Obj-C (для macOS).. 
+Большое спасибо [Adatan](https://github.com/Adatan) и [kavars](https://github.com/kavars) за то, что вызвались разработать аналоги на Rust (для Windows) и Swift + Obj-C (для macOS).. 
 Касательно эффективности, я сравнивал скорость заполнения на 2-ух накопителях: 1 TB Samsung 970 Evo Plus и 256 GB SK Hynix (HFS256GD9TNG-62A0A). 
 На Samsung между скриптом по тесту автономности на PowerShell (Allocate-memory.ps1) и консольной утилитой (storage_max_loader.exe) разница в скорости заполнения SSD составляет 16-43% (в зависимости от размера блока, 128КБ или 1024 КБ) в пользу консольной утилиты на Rust от Adatan. Однако на SK Hynix разница составила 1.5%-2.7% в пользу PowerShell-скрипта, написанного мной. 
 В любом случае, у нас нет возможности напрямую сравнивать скорость заполнения накопителя скриптом PowerShell и утилитой на Rust, поэтому мы, начиная с февраля 2020 года (скорее, с середины февраля), начнём тестировать ноутбуки на Windows, используя поочередёно оба решения для заполнения накопителя (сперва заполним одним методом, затем очистим сгенерированные данные, вызовем TRIM и заполним другим методом).
