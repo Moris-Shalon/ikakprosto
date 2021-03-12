@@ -24,7 +24,7 @@ function AllocateMemory {
 				Clear-Host
 				AllocateMemory
 			} else {
-				[uint16]$SpaceToAllocateGiB = 70
+				[uint16]$SpaceToAllocateGiB = $FreeSpaceGiB - 70
 			}
 		}
 		# $SpacetoAllocateGiB.GetType().fullname
