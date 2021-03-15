@@ -108,7 +108,7 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg) {
                 }
             }
             If ($OperationChoose -eq 1 -Or $OperationChoose -eq 2 ) {
-                $outfile = "$outputdir\cpyonly-h265-4K-8-bit-60FPS-decode"
+                $outfile = "$outputdir\cpuonly-h265-4K-8-bit-60FPS-decode"
 			    Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' -f null -"} | Tee-Object -file "$outfile.txt"
             }
 		}
