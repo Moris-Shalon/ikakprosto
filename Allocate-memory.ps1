@@ -47,30 +47,34 @@ function AllocateMemory {
             Write-Output "`nGenerating 1 GiB of random data`n";
             $out = new-object byte[] (1024*1024*1024);
             (new-object Random).NextBytes($out);
-            $log_file="Allocate-Memory-log.csv";
-            if (-not (Test-Path -LiteralPath "$log_file" -PathType Leaf)) {
-                Set-Content -Path "$log_file" -Value "GiBwritten;Speed (MiB/sec);TimeSpent (seconds);";
+            $logfile="$PSScriptRoot\Allocate-Memory-log.csv";
+            if (-not (Test-Path -LiteralPath "$logfile" -PathType Leaf)) {
+                Set-Content -Path "$logfile" -Value "GiBwritten;Speed (MiB/sec);TimeSpent (seconds);";
             } else {
-                Add-Content -Path "$log_file" -Value ";;;running test one more time at $(Get-Date -Format 'yyyy.MM.dd_HH:mm:ss.fff')";
-                Add-Content -Path "$log_file" -Value "GiBwritten;Speed (MiB/sec);TimeSpent (seconds);";
+                Add-Content -Path "$logfile" -Value ";;;running test one more time at $(Get-Date -Format 'yyyy.MM.dd_HH:mm:ss.fff')";
+                Add-Content -Path "$logfile" -Value "GiBwritten;Speed (MiB/sec);TimeSpent (seconds);";
             }
-
+            $MaxAllocationSpeed = $([Double]::MinValue);
+			$MinAllocationSpeed = $([Double]::MaxValue);
             Write-Output "Writing random data to multiple files in '$WritePath'`n";
             $MeasureCommand = Measure-Command -Expression {for ($i=1; $i -le $SpaceToAllocateGiB; $i++) {
-            $filename = Get-Date -Format HH.mm.ss.fff;
-            Measure-Command -Expression {[IO.File]::WriteAllBytes("$WritePath\$filename", $out)} | ForEach { 
-                $AllocationSpeed = [String]([Math]::Round(1024/($_.TotalSeconds), 2)) -replace "\.",","; 
-                $TimeSpent = [String]$_.TotalSeconds -replace "\.",",";
+                $filename = Get-Date -Format HH.mm.ss.fff;
+                Measure-Command -Expression {[IO.File]::WriteAllBytes("$WritePath\$filename", $out)} | ForEach { 
+                    [Double]$AllocationSpeed = $([Math]::Round(1024/($_.TotalSeconds), 2));
+                    if ($AllocationSpeed -gt $MaxAllocationSpeed) { $MaxAllocationSpeed = $AllocationSpeed; };
+					if ($AllocationSpeed -lt $MinAllocationSpeed) { $MinAllocationSpeed = $AllocationSpeed; };
+					[String]$AllocationSpeedString = $AllocationSpeed -replace "\.",",";
+                    $TimeSpent = [String]$_.TotalSeconds -replace "\.",",";
+                };
+                Write-Host "`rAllocated $i/$SpaceToAllocateGiB GiB. Current file write speed = $AllocationSpeed MiB/sec." -NoNewLine;
+                Add-Content -Path "$logfile" -Value "$i;$AllocationSpeedString;$TimeSpent;";
+                if ($i -eq $SpaceToAllocateGiB) {Write-Host ""};
+                }
             }
-            Write-Host "`rAllocated $i/$SpaceToAllocateGiB GiB. Current file write speed = $AllocationSpeed MiB/sec." -NoNewLine;
-            Add-Content -Path "$log_file" -Value "$i;$AllocationSpeed;$TimeSpent;";
-            if ($i -eq $SpaceToAllocateGiB) {Write-Host "`rAllocated $i/$SpaceToAllocateGiB GiB"};
-            }
-        }
-        Write-Output $MeasureCommand;
-        ForEach ($i in $MeasureCommand) { $AvgAllocationSpeed = [Math]::Round(1024*$SpaceToAllocateGiB/($MeasureCommand.TotalSeconds), 2) };
-        Write-Output "Average Allocation Speed = $AvgAllocationSpeed MiB/sec`n";
-        Write-Output "Done. `n";
+            Write-Output $MeasureCommand;
+            ForEach ($i in $MeasureCommand) { $AvgAllocationSpeed = [Math]::Round(1024*$SpaceToAllocateGiB/($MeasureCommand.TotalSeconds), 2) };
+            Write-Output "Allocation Speed (MiB/sec): Average = $AvgAllocationSpeed, Min = $MinAllocationSpeed, Max = $MaxAllocationSpeed.`n";
+            Write-Output "Done. `n";
         } else {
             Write-Output "You have entered wrong value, please check your available free space."
             Write-Output "To exit press 'Ctrl+C'"
