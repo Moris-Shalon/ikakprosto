@@ -87,7 +87,10 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg, $decodecodec) {
                     $outfilecreation = "-f null -";
                 }
                 $ffmpegpost = "-c:v $encodecodec$Encoder -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 -qmin 18 -qmax 24 $outfilecreation";
-                if ($encodecodec -eq "av1") { $ffmpegpost = "-c:v $encodecodec -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 -qmin 18 -qmax 24 $outfilecreation"; }
+                # if ($encodecodec -eq "av1") { $ffmpegpost = "-c:v $encodecodec -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 -qmin 18 -qmax 24 $outfilecreation"; }
+                if ($encodecodec -eq "av1") {
+                    $ffmpegpost = "-c:v libsvtav1 -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $outfilecreation";
+                }
                 Write-Output "'$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost";
                 Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt";
                 If ($outfilecreationchoice -eq 0) {
@@ -126,6 +129,9 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg, $decodecodec) {
                         $outfilecreation = "-f null -";
                     }
                     $ffmpegpost = "-c:v $encodecodec -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $outfilecreation";
+                    if ($encodecodec -eq "av1") {
+                        $ffmpegpost = "-c:v libsvtav1 -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $outfilecreation";
+                    }
                     Write-Output "'$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost";
                     Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt";
                     If ($outfilecreationchoice -eq 0) {
