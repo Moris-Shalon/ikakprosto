@@ -74,7 +74,7 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg, $decodecodec) {
             $OperationChoose = $Host.UI.PromptForChoice("Transcode/Decode Choose", "Would you like to transcode from H.265 to H.264, or just decode H.265 video, or do both operations?", @('&Transcode', '&Decode', '&Both'), 2);
             If ($OperationChoose -eq 0 -Or $OperationChoose -eq 2 ) {
                 $Chooseencodecodec = $Host.UI.PromptForChoice("Encode codec choose", "Into which codec would you like to transcode video?", @("AV&1", "H.265&2`b", "H.264&3`b"), 2);
-                switch ($Choosedecodecodec) {
+                switch ($Chooseencodecodec) {
                     0 { $encodecodec = "av1"; $Encoder = "" }
                     1 { $encodecodec = "hevc" }
                     2 { $encodecodec = "h264" }
@@ -108,7 +108,7 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg, $decodecodec) {
             $OperationChoose = $Host.UI.PromptForChoice("Transcode/Decode Choose", "Would you like to transcode from H.265 to H.264, or just decode H.265 video, or do both operations?", @('&Transcode', '&Decode', '&Both'), 2);
             If ($OperationChoose -eq 0 -Or $OperationChoose -eq 2 ) {
                 $Chooseencodecodec = $Host.UI.PromptForChoice("Encode codec choose", "Into which codec would you like to transcode video?", @("AV&1", "H.265&2`b", "H.264&3`b"), 2);
-                switch ($Choosedecodecodec) {
+                switch ($Chooseencodecodec) {
                     0 { $encodecodec = "av1"  }
                     1 { $encodecodec = "hevc" }
                     2 { $encodecodec = "h264" }
