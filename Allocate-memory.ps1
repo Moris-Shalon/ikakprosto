@@ -3,7 +3,6 @@ function AllocateMemory {
     Get-PSDrive -PSProvider 'FileSystem';
     $Drives = Get-PSDrive -PSProvider 'FileSystem' | Foreach-Object {$_.Name};
     #Write-Output "`nAvailable local drives:";
-    #foreach ($DriveName in $Drives) {Write-Output $DriveName};
     $ChoosedDrive = Read-Host -Prompt "`nPlease choose your drive for test (write only letter, check 'Name' column)";
 
     $ChoosedDrivecolon = ($ChoosedDrive + ":");
@@ -27,9 +26,8 @@ function AllocateMemory {
                 [uint16]$SpaceToAllocateGiB = $FreeSpaceGiB - 70;
             }
         }
-        # $SpacetoAllocateGiB.GetType().fullname
-	# Variants of function without FreeSpaceGiB variable
-	#$SpaceToAllocateGiB = ([math]::Truncate(($FreeSpace-(70*1024*1024*1024))/1024/1024/1024))
+        # Variants of function without FreeSpaceGiB variable;
+        # $SpaceToAllocateGiB = ([math]::Truncate(($FreeSpace-(70*1024*1024*1024))/1024/1024/1024));
 
         if ($ChoosedDrive -eq "C") {
             $WritePath = "$HOME\Desktop\testmemory";
@@ -38,7 +36,7 @@ function AllocateMemory {
         }
 
         if (($SpaceToAllocateGiB -gt 0) -and ($SpaceToAllocateGiB -le $FreeSpaceGiB)) {
-            Write-Output "`nGoing to allocate: $SpaceToAllocateGiB GiB"
+            Write-Output "`nGoing to allocate: $SpaceToAllocateGiB GiB";
             if (Test-Path -LiteralPath $WritePath -PathType Any) {
                 Write-Output "Path '$WritePath' already exists";
             } else { 
@@ -55,15 +53,15 @@ function AllocateMemory {
                 Add-Content -Path "$logfile" -Value "GiBwritten;Speed (MiB/sec);TimeSpent (seconds);";
             }
             $MaxAllocationSpeed = $([Double]::MinValue);
-			$MinAllocationSpeed = $([Double]::MaxValue);
+            $MinAllocationSpeed = $([Double]::MaxValue);
             Write-Output "Writing random data to multiple files in '$WritePath'`n";
             $MeasureCommand = Measure-Command -Expression {for ($i=1; $i -le $SpaceToAllocateGiB; $i++) {
                 $filename = Get-Date -Format HH.mm.ss.fff;
                 Measure-Command -Expression {[IO.File]::WriteAllBytes("$WritePath\$filename", $out)} | ForEach { 
                     [Double]$AllocationSpeed = $([Math]::Round(1024/($_.TotalSeconds), 2));
                     if ($AllocationSpeed -gt $MaxAllocationSpeed) { $MaxAllocationSpeed = $AllocationSpeed; };
-					if ($AllocationSpeed -lt $MinAllocationSpeed) { $MinAllocationSpeed = $AllocationSpeed; };
-					[String]$AllocationSpeedString = $AllocationSpeed -replace "\.",",";
+                    if ($AllocationSpeed -lt $MinAllocationSpeed) { $MinAllocationSpeed = $AllocationSpeed; };
+                    [String]$AllocationSpeedString = $AllocationSpeed -replace "\.",",";
                     $TimeSpent = [String]$_.TotalSeconds -replace "\.",",";
                 };
                 Write-Host "`rAllocated $i/$SpaceToAllocateGiB GiB. Current file write speed = $AllocationSpeed MiB/sec." -NoNewLine;
@@ -76,23 +74,23 @@ function AllocateMemory {
             Write-Output "Allocation Speed (MiB/sec): Average = $AvgAllocationSpeed, Min = $MinAllocationSpeed, Max = $MaxAllocationSpeed.`n";
             Write-Output "Done. `n";
         } else {
-            Write-Output "You have entered wrong value, please check your available free space."
-            Write-Output "To exit press 'Ctrl+C'"
-            Write-Output "Press any key to continue..."
+            Write-Output "You have entered wrong value, please check your available free space.";
+            Write-Output "To exit press 'Ctrl+C'";
+            Write-Output "Press any key to continue...";
             $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-            Clear-Host
-            AllocateMemory
+            Clear-Host;
+            AllocateMemory;
         }
     } else {
-        Write-Output "You have entered wrong drive, please choose another one"
-        Write-Output "To exit press 'Ctrl+C'"
-        Write-Output "Press any key to continue..."
+        Write-Output "You have entered wrong drive, please choose another one";
+        Write-Output "To exit press 'Ctrl+C'";
+        Write-Output "Press any key to continue...";
         $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-        Clear-Host
-        AllocateMemory
+        Clear-Host;
+        AllocateMemory;
     }
 }
 
-AllocateMemory
+AllocateMemory;
 
-pause
+pause;
