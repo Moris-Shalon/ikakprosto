@@ -86,10 +86,17 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg, $decodecodec) {
                 } Else {
                     $outfilecreation = "-f null -";
                 }
-                $ffmpegpost = "-c:v $encodecodec$Encoder -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 -qmin 18 -qmax 24 $outfilecreation";
+                $bitratechoiseprompt = $Host.UI.PromptForChoice("Output bitrate choice", "Would you like to manually specify output file bitrate?", @('&Yes', '&No'), 1);
+                If ($bitratechoiseprompt -eq 0) {
+                    $bitratechoisevalue = Read-Host -Prompt "Please, enter your desired bitrate in '100M' format (means 100 Mbit/s):`n";
+                    $bitratechoise = "-profile:v main -b:v $bitratechoisevalue";
+                } Else {
+                    $bitratechoise = "";
+                }
+                $ffmpegpost = "-c:v $encodecodec$Encoder -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 -qmin 18 -qmax 24 $bitratechoise $outfilecreation";
                 # if ($encodecodec -eq "av1") { $ffmpegpost = "-c:v $encodecodec -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 -qmin 18 -qmax 24 $outfilecreation"; }
                 if ($encodecodec -eq "av1") {
-                    $ffmpegpost = "-c:v libsvtav1 -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $outfilecreation";
+                    $ffmpegpost = "-c:v libsvtav1 -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $bitratechoise $outfilecreation";
                 }
                 Write-Output "'$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost";
                 Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt";
@@ -128,9 +135,16 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg, $decodecodec) {
                     } Else {
                         $outfilecreation = "-f null -";
                     }
-                    $ffmpegpost = "-c:v $encodecodec -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $outfilecreation";
+                    $bitratechoiseprompt = $Host.UI.PromptForChoice("Output bitrate choice", "Would you like to manually specify output file bitrate?", @('&Yes', '&No'), 1);
+                    If ($bitratechoiseprompt -eq 0) {
+                        $bitratechoisevalue = Read-Host -Prompt "Please, enter your desired bitrate in '100M' format (means 100 Mbit/s):`n";
+                        $bitratechoise = "-profile:v main -b:v $bitratechoisevalue";
+                    } Else {
+                        $bitratechoise = "";
+                    }
+                    $ffmpegpost = "-c:v $encodecodec -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $bitratechoise $outfilecreation";
                     if ($encodecodec -eq "av1") {
-                        $ffmpegpost = "-c:v libsvtav1 -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $outfilecreation";
+                        $ffmpegpost = "-c:v libsvtav1 -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $bitratechoise $outfilecreation";
                     }
                     Write-Output "'$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost";
                     Measure-Command -Expression { Invoke-Expression "& '$ffmpeg' $ffmpegpre '$inputfile' $ffmpegpost" } | Tee-Object -file "$outfile.txt";
