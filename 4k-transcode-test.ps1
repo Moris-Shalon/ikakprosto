@@ -127,20 +127,23 @@ function TranscodeTest ($inputfile, $outputdir, $ffmpeg, $decodecodec) {
                 ForEach ($crf in @('', '-crf 0')) {
                     if ($crf -eq '') {
                         $outfile = "$outputdir\cpuonly-$decodecodec-4K-8-bit-60FPS-transcode-$encodecodec";
+                        $bitratechoiseprompt = $Host.UI.PromptForChoice("Output bitrate choice", "Would you like to manually specify output file bitrate?", @('&Yes', '&No'), 1);
+                        If ($bitratechoiseprompt -eq 0) {
+                            $bitratechoisevalue = Read-Host -Prompt "Please, enter your desired bitrate in '100M' format (means 100 Mbit/s):`n";
+                            $bitratechoise = "-profile:v main -b:v $bitratechoisevalue";
+                        } Else {
+                            $bitratechoise = "";
+                        }
                     } Else {
                         $outfile = "$outputdir\cpuonly-$decodecodec-4K-8-bit-60FPS-transcode-$encodecodec-crf0";
+                        $bitratechoiseprompt = "";
+                        $bitratechoisevalue = "";
+                        $bitratechoise = "";
                     }
                     If ($outfilecreationchoice -eq 0) {
                         $outfilecreation = "'$outfile.mp4'";
                     } Else {
                         $outfilecreation = "-f null -";
-                    }
-                    $bitratechoiseprompt = $Host.UI.PromptForChoice("Output bitrate choice", "Would you like to manually specify output file bitrate?", @('&Yes', '&No'), 1);
-                    If ($bitratechoiseprompt -eq 0) {
-                        $bitratechoisevalue = Read-Host -Prompt "Please, enter your desired bitrate in '100M' format (means 100 Mbit/s):`n";
-                        $bitratechoise = "-profile:v main -b:v $bitratechoisevalue";
-                    } Else {
-                        $bitratechoise = "";
                     }
                     $ffmpegpost = "-c:v $encodecodec -c:a copy -map 0:v:0 -map 0:a:0 -vsync 0 $crf -qmin 18 -qmax 24 $bitratechoise $outfilecreation";
                     if ($encodecodec -eq "av1") {
