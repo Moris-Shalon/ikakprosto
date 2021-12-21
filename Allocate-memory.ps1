@@ -3,7 +3,7 @@ function AllocateMemory {
     Get-PSDrive -PSProvider 'FileSystem';
     $Drives = Get-PSDrive -PSProvider 'FileSystem' | Foreach-Object {$_.Name};
     #Write-Output "`nAvailable local drives:";
-    $ChoosedDrive = Read-Host -Prompt "`nPlease choose your drive for test (write only letter, check 'Name' column)";
+    $ChoosedDrive = (Read-Host -Prompt "`nPlease choose your drive for test (write only letter, check 'Name' column)").ToUpper();
 
     $ChoosedDrivecolon = ($ChoosedDrive + ":");
     if ($Drives.Contains($ChoosedDrive)) {
