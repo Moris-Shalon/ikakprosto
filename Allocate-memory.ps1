@@ -45,7 +45,8 @@ function AllocateMemory {
             Write-Output "`nGenerating 1 GiB of random data`n";
             $out = new-object byte[] (1024*1024*1024);
             (new-object Random).NextBytes($out);
-            $logfile="$PSScriptRoot\Allocate-Memory-log.csv";
+            #$logfile="$PSScriptRoot\Allocate-Memory-log.csv";
+            $logfile="Allocate-Memory-log.csv";
             if (-not (Test-Path -LiteralPath "$logfile" -PathType Leaf)) {
                 Set-Content -Path "$logfile" -Value "GiBwritten;Speed (MiB/sec);TimeSpent (seconds);";
             } else {
